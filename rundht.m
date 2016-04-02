@@ -7,35 +7,44 @@ function rundht
 cimage = input('Enter name of image: ','s');
 im = imread(cimage);
 
+MSE = zeros(2,4);
+PSNR = zeros(2,4);
 
 % reconstruct with 4 coefficients
-[im_r,N,psnr] = coeff(im,4);
+[im_r,N,psnr,mse] = coeff(im,4);
 imshow(uint8(im_r))
 title(sprintf('4 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',...
     psnr, N))
 print -deps2 lena_4
 saveas(gcf, 'DHT_4.jpg');
+MSE(:,1) = [4 mse];
+PSNR(:,1) = [4 psnr];
+
 
 % reconstruct with 8 coefficients
-[im_r,N,psnr] = coeff(im,8);
+[im_r,N,psnr,mse] = coeff(im,8);
 figure(2)
 imshow(uint8(im_r))
 title(sprintf('8 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',...
     psnr, N))
 print -deps2 lena_8
 saveas(gcf, 'DHT_8.jpg');
+MSE(:,2) = [8 mse];
+PSNR(:,2) = [8 psnr];
 
 % reconstruct with 16 coefficients
-[im_r,N,psnr] = coeff(im,16);
+[im_r,N,psnr,mse] = coeff(im,16);
 figure(3)
 imshow(uint8(im_r))
 title(sprintf('16 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',...
     psnr, N))
 print -deps2 lena_16
 saveas(gcf, 'DHT_16.jpg');
+MSE(:,3) = [16 mse];
+PSNR(:,3) = [16 psnr];
 
 % reconstruct with 32 coefficients
-[im_r,N,psnr] = coeff(im,32);
+[im_r,N,psnr,mse] = coeff(im,32);
 figure(4)
 imshow(uint8(im_r))
 title(sprintf('32 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',...
@@ -43,7 +52,17 @@ title(sprintf('32 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',
 % 32*prod(size(im))/64)
 print -deps2 lena_32
 saveas(gcf, 'DHT_32.jpg');
+MSE(:,4) = [32 mse];
+PSNR(:,4) = [32 psnr];
 
+figure;
+plot(MSE(1,:), MSE(2,:));
+title('MSE vs # of coefficients');
+saveas(gcf, 'DHT_MSE.jpg')
+figure;
+plot(PSNR(1,:), PSNR(2,:));
+title('PSNR vs # of coefficients');
+saveas(gcf, 'DHT_PSNR.jpg')
 % Compute the reconstructed image with different numbers of coefficients
 % input:     im -- original image
 %             k -- number of retained coefficients
@@ -51,7 +70,7 @@ saveas(gcf, 'DHT_32.jpg');
 %             N -- number of nonzero coefficients
 %          psnr -- psnr of the reconstructed image
 
-function [im_r,N,psnr] = coeff(im,k)
+function [im_r,N,psnr,mse] = coeff(im,k)
 
 im = double(im);
 
@@ -59,7 +78,8 @@ im_c = blkproc(im,[8,8],'dht(x).*P1',coeff_indx(k));
 N = length(find(im_c ~= 0));
 im_r = blkproc(im_c,[8,8],'64.*dht(x)');
 psnr = 10*log10(255*255/mean(mean((im - im_r).^2)));
-
+se = (im-im_r).^2;
+mse = sum(se(:))/64;
 
 
 
