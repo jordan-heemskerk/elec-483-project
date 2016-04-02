@@ -12,6 +12,7 @@ imshow(uint8(im_r))
 title(sprintf('4 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',...
     psnr, N))
 print -deps2 lena_4
+saveas(gcf, 'DCT_4.jpg');
 
 % reconstruct with 8 coefficients
 [im_r,N,psnr] = coeff9_8(im,8);
@@ -20,6 +21,7 @@ imshow(uint8(im_r))
 title(sprintf('8 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',...
     psnr, N))
 print -deps2 lena_8
+saveas(gcf, 'DCT_8.jpg');
 
 % reconstruct with 16 coefficients
 [im_r,N,psnr] = coeff9_8(im,16);
@@ -28,6 +30,7 @@ imshow(uint8(im_r))
 title(sprintf('16 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',...
     psnr, N))
 print -deps2 lena_16
+saveas(gcf, 'DCT_16.jpg');
 
 % reconstruct with 32 coefficients
 [im_r,N,psnr] = coeff9_8(im,32);
@@ -37,6 +40,7 @@ title(sprintf('32 coefficients (PSNR = %.4f, %d nonzero coefficients in total)',
     psnr, N))
 % 32*prod(size(im))/64)
 print -deps2 lena_32
+saveas(gcf, 'DCT_32.jpg');
 
 % Compute the reconstructed image with different numbers of coefficients
 % input:     im -- original image
